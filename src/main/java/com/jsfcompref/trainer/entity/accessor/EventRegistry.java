@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -20,9 +21,12 @@ import javax.persistence.Query;
 
 @ManagedBean(eager = true)
 @SessionScoped
-public class EventRegistry extends AbstractEntityAccessor implements Serializable {
+public class EventRegistry implements Serializable {
 
     // <editor-fold defaultstate="collapsed" desc="Accessing and Initializing the Instance">
+
+    @EJB
+    AbstractEntityAccessor abstractEntityAccessor;
 
     public static EventRegistry getCurrentInstance() {
         EventRegistry result = null;
@@ -40,7 +44,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
     @PostConstruct
     public void perSessionConstructor() {
         try {
-            doInTransaction(new PersistenceActionWithoutResult() {
+            abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
                 public void execute(EntityManager em) {
                     Query query = em.createNamedQuery("event.getAll");
@@ -49,7 +53,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
                         populateEvents(em);
                         query = em.createNamedQuery("event.getAll");
                         results = query.getResultList();
-                        assert(!results.isEmpty());
+                        assert (!results.isEmpty());
                     }
                 }
             });
@@ -97,7 +101,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
         Event result = null;
 
         try {
-            result = doInTransaction(new PersistenceAction<Event>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<Event>() {
 
                 public Event execute(EntityManager em) {
                     return em.find(Event.class, id);
@@ -114,7 +118,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
     public List<Event> getEventList() {
         List<Event> result = Collections.emptyList();
         try {
-            result = doInTransaction(new PersistenceAction<List<Event>>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<List<Event>>() {
 
                 public List<Event> execute(EntityManager em) {
                     Query query = em.createNamedQuery("event.getAll");
@@ -137,7 +141,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
         Event result = null;
 
         try {
-            result = doInTransaction(new PersistenceAction<Event>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<Event>() {
 
                 public Event execute(EntityManager em) {
                     Event result = em.find(Event.class, id);
@@ -177,7 +181,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
 
 
     public void addEvent(final Event toAdd) throws EntityAccessorException {
-        doInTransaction(new PersistenceActionWithoutResult() {
+        abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
             public void execute(EntityManager em) {
                 em.persist(toAdd);
@@ -186,7 +190,7 @@ public class EventRegistry extends AbstractEntityAccessor implements Serializabl
     }
 
     public void updateEvent(final Event toAdd) throws EntityAccessorException {
-        doInTransaction(new PersistenceActionWithoutResult() {
+        abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
             public void execute(EntityManager em) {
                 em.merge(toAdd);

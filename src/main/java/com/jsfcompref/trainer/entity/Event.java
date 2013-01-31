@@ -3,21 +3,18 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "vtEvents")
+//@Table(name = "vtEvents")
 @NamedQueries({@NamedQuery(name = "event.getAll", query = "select e from Event as e")})
 @ManagedBean
 @RequestScoped
-public class Event  extends AbstractEntity implements Serializable
-{
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(nullable = false, unique = true)
     String name;
 
@@ -90,10 +87,16 @@ public class Event  extends AbstractEntity implements Serializable
     }
 
 
+    // getters and setters
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-
-  public String getName()
+    public String getName()
   {
     return name;
   }

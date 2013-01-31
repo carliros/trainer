@@ -8,28 +8,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "trainingSessions")
+//@Table(name = "trainingSessions")
 @NamedQueries({
     @NamedQuery(name = "trainingSession.getAll", query = "select t from TrainingSession as t"),
     @NamedQuery(name = "trainingSession.getSessionsForUserAndEvent", query = "select t from TrainingSession as t where t.user.id = :theId and t.eventId = :eventId")
 })
 @ManagedBean
- @RequestScoped
-public class TrainingSession  extends AbstractEntity implements Serializable {
+@RequestScoped
+public class TrainingSession {
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "workout_date")
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Temporal(TemporalType.DATE)
+  //@Column(name = "workout_date")
   Date workoutDate;
 
   String workoutDescription;
@@ -38,17 +34,17 @@ public class TrainingSession  extends AbstractEntity implements Serializable {
 
   String personalNotes;
 
-  String TrainerNotes;
+  String trainerNotes;
 
   private Long eventId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+  @ManyToOne
+  @JoinColumn
+  private User user;
 
 
-    public TrainingSession() {
-    }
+  public TrainingSession() {
+  }
 
     public TrainingSession(Long eventId, User user, Date workoutdate,
           String workoutdesc, boolean completed, String personalnotes,
@@ -88,7 +84,7 @@ public class TrainingSession  extends AbstractEntity implements Serializable {
         if ((this.personalNotes == null) ? (other.personalNotes != null) : !this.personalNotes.equals(other.personalNotes)) {
             return false;
         }
-        if ((this.TrainerNotes == null) ? (other.TrainerNotes != null) : !this.TrainerNotes.equals(other.TrainerNotes)) {
+        if ((this.trainerNotes == null) ? (other.trainerNotes != null) : !this.trainerNotes.equals(other.trainerNotes)) {
             return false;
         }
         if (this.getEventId() != other.getEventId() && (this.getEventId() == null || !this.eventId.equals(other.eventId))) {
@@ -104,16 +100,21 @@ public class TrainingSession  extends AbstractEntity implements Serializable {
         hash = 17 * hash + (this.workoutDescription != null ? this.workoutDescription.hashCode() : 0);
         hash = 17 * hash + (this.completed ? 1 : 0);
         hash = 17 * hash + (this.personalNotes != null ? this.personalNotes.hashCode() : 0);
-        hash = 17 * hash + (this.TrainerNotes != null ? this.TrainerNotes.hashCode() : 0);
+        hash = 17 * hash + (this.trainerNotes != null ? this.trainerNotes.hashCode() : 0);
         hash = 17 * hash + (this.getEventId() != null ? this.getEventId().hashCode() : 0);
         return hash;
     }
 
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-
-  public void setWorkoutDate(Date workoutDate)
+    public void setWorkoutDate(Date workoutDate)
   {
     this.workoutDate = workoutDate;
   }
@@ -154,7 +155,7 @@ public class TrainingSession  extends AbstractEntity implements Serializable {
   }
 
   public void setTrainerNotes(String trainerNotes) {
-      this.TrainerNotes = trainerNotes;
+      this.trainerNotes = trainerNotes;
         try {
             UserRegistry.getCurrentInstance().updateTrainingSession(this);
         } catch (EntityAccessorException ex) {
@@ -164,7 +165,7 @@ public class TrainingSession  extends AbstractEntity implements Serializable {
 
   public String getTrainerNotes()
   {
-    return TrainerNotes;
+    return trainerNotes;
   }
 
     public User getUser() {

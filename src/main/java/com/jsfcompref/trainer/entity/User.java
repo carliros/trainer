@@ -14,19 +14,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 
 @Entity
-@Table(name = "vtUsers")
+//@Table(name = "vtUsers")
+
 @NamedQueries({
     @NamedQuery(name = "user.getAll", query = "select u from User as u"),
     @NamedQuery(name = "user.getTrainers", query = "select u from User as u where u.trainer = TRUE"),
@@ -35,8 +28,11 @@ import javax.persistence.TemporalType;
 })
 @ManagedBean
 @RequestScoped
-public class User extends AbstractEntity implements Serializable {
+public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     protected String firstName;
     protected String lastName;
@@ -45,11 +41,16 @@ public class User extends AbstractEntity implements Serializable {
     protected String sex;
     protected String email;
     private String serviceLevel = "medium";
-    @Column(name="userid", nullable=false)
+    @Column(nullable=false)
     private String userid;
     private String password;
     private boolean trainer;
+
+    @ElementCollection
+    @CollectionTable(name = "subscribedEvent")
+    @Column(name = "idEvent")
     private List<Long> subscribedEventIds;
+
     private Long personalTrainerId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -101,6 +102,14 @@ public class User extends AbstractEntity implements Serializable {
         }
     }
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public List<TrainingSession> getTrainingSessions() {
         return sessions;

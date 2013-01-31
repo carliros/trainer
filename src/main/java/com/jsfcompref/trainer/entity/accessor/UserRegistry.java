@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -21,10 +22,13 @@ import javax.persistence.Query;
 
 @ManagedBean(eager = true)
 @ApplicationScoped
-public class UserRegistry extends AbstractEntityAccessor implements Serializable {
+public class UserRegistry implements Serializable {
 
 
     // <editor-fold defaultstate="collapsed" desc="Accessing and initializing the instance">
+
+    @EJB
+    AbstractEntityAccessor abstractEntityAccessor;
 
     public static UserRegistry getCurrentInstance() {
         UserRegistry result = null;
@@ -39,7 +43,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     @PostConstruct
     public void perApplicationConstructor() {
         try {
-            doInTransaction(new PersistenceActionWithoutResult() {
+            abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
                 public void execute(EntityManager em) {
                     Query query = em.createNamedQuery("user.getAll");
@@ -48,7 +52,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
                         populateUsers(em);
                         query = em.createNamedQuery("user.getAll");
                         results = query.getResultList();
-                        assert(!results.isEmpty());
+                        assert (!results.isEmpty());
                     }
                 }
             });
@@ -62,7 +66,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
 
         // the trainers
         em.persist(new User("Jake", "DeJoque", "male", new java.util.Date(), "jake@vtrainer.com", "Premium", "jake", "jake", true));
-        em.persist(new User("Frauke", "Fu§nochel", "female", new java.util.Date(), "frauke@vtrainer.com", "Premium", "frauke", "frauke", true));
+        em.persist(new User("Frauke", "Fuï¿½nochel", "female", new java.util.Date(), "frauke@vtrainer.com", "Premium", "frauke", "frauke", true));
         em.persist(new User("Andrew", "Abs", "male", new java.util.Date(), "andrew@vtrainer.com", "Premium", "andrew", "andrew", true));
 
         // the users
@@ -100,7 +104,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     public User getUserById(final Long id) {
         User result = null;
         try {
-            result = doInTransaction(new PersistenceAction<User>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<User>() {
 
                 public User execute(EntityManager em) {
                     return em.find(User.class, id);
@@ -115,7 +119,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     public List<User> getUserList() {
         List<User> result = Collections.emptyList();
         try {
-            result = doInTransaction(new PersistenceAction<List<User>>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<List<User>>() {
 
                 public List<User> execute(EntityManager em) {
                     Query query = em.createNamedQuery("user.getAll");
@@ -133,7 +137,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     public List<User> getTrainerList() {
         List<User> result = Collections.emptyList();
         try {
-            result = doInTransaction(new PersistenceAction<List<User>>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<List<User>>() {
 
                 public List<User> execute(EntityManager em) {
                     Query query = em.createNamedQuery("user.getTrainers");
@@ -151,7 +155,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     public List<User> getTraineesForTrainer(final User trainer) {
         List<User> result = Collections.emptyList();
         try {
-            result = doInTransaction(new PersistenceAction<List<User>>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<List<User>>() {
 
                 public List<User> execute(EntityManager em) {
                     Query query = em.createNamedQuery("user.getUsersForTrainerId");
@@ -172,7 +176,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     // <editor-fold defaultstate="collapsed" desc="Writing User instances">
 
     public void addUser(final User toAdd) throws EntityAccessorException {
-        doInTransaction(new PersistenceActionWithoutResult() {
+        abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
             public void execute(EntityManager em) {
                 em.persist(toAdd);
@@ -181,7 +185,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     }
 
     public void updateUser(final User toUpdate) throws EntityAccessorException {
-        doInTransaction(new PersistenceActionWithoutResult() {
+        abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
             public void execute(EntityManager em) {
                 em.merge(toUpdate);
@@ -197,7 +201,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
             final Event e) {
         List<TrainingSession> result = null;
         try {
-            result = doInTransaction(new PersistenceAction<List<TrainingSession>>() {
+            result = abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceAction<List<TrainingSession>>() {
 
                 public List<TrainingSession> execute(EntityManager em) {
                     Query query = em.createNamedQuery("trainingSession.getSessionsForUserAndEvent");
@@ -219,7 +223,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     // <editor-fold defaultstate="collapsed" desc="Writing TrainingSession instances">
 
     public void addTrainingSessions(final List<TrainingSession> toAdd) throws EntityAccessorException {
-        doInTransaction(new PersistenceActionWithoutResult() {
+        abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
             public void execute(EntityManager em) {
                 for (TrainingSession t : toAdd) {
@@ -230,7 +234,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     }
 
     public void updateTrainingSession(final TrainingSession toUpdate) throws EntityAccessorException {
-        doInTransaction(new PersistenceActionWithoutResult() {
+        abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
             public void execute(EntityManager em) {
                 em.merge(toUpdate);
@@ -242,11 +246,11 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     public void removeTrainingSessionForUserAndEvent(final User user,
             final Event e, final TrainingSession trainingSession) {
         try {
-            doInTransaction(new PersistenceActionWithoutResult() {
+            abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
                 public void execute(EntityManager em) {
                     em.remove(em.contains(trainingSession) ? trainingSession :
-                        em.merge(trainingSession)); // em.contains(r) ? r : em.merge(r)
+                            em.merge(trainingSession)); // em.contains(r) ? r : em.merge(r)
                     user.getTrainingSessions().remove(trainingSession);
                     em.merge(user);
                 }
@@ -259,7 +263,7 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     public void updateTrainingSessionForUser(final User user,
             final TrainingSession trainingSession) {
         try {
-            doInTransaction(new PersistenceActionWithoutResult() {
+            abstractEntityAccessor.doInTransaction(new AbstractEntityAccessor.PersistenceActionWithoutResult() {
 
                 public void execute(EntityManager em) {
                     em.merge(trainingSession);
@@ -272,7 +276,5 @@ public class UserRegistry extends AbstractEntityAccessor implements Serializable
     }
 
     // </editor-fold>
-
-
 
 }
