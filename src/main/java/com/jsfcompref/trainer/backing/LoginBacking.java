@@ -1,7 +1,8 @@
 package com.jsfcompref.trainer.backing;
 
-import com.jsfcompref.trainer.entity.accessor.UserRegistry;
-import com.jsfcompref.trainer.entity.User;
+import com.jsfcompref.trainer.controller.UserRegistry;
+import com.jsfcompref.trainer.model.User;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIInput;
 import javax.faces.event.ComponentSystemEvent;
@@ -12,13 +13,13 @@ public class LoginBacking extends AbstractBacking {
     private UIInput loginOutcomeChoiceList;
 
     private User nonAuthenticatedUser;
-    
+
     public boolean useridIsValid(String toTest) {
         boolean result = false;
 
         UserRegistry registry = UserRegistry.getCurrentInstance();
 
-        result = null != (nonAuthenticatedUser = registry.getUserByUserid(toTest));
+        result = null != (nonAuthenticatedUser = registry.userEJB.getUserByUserId(toTest));
 
         return result;
     }
@@ -49,17 +50,17 @@ public class LoginBacking extends AbstractBacking {
         if (isUserLoggedIn()) {
             getFacesContext().getApplication().getNavigationHandler().
                     handleNavigation(getFacesContext(), null,
-                    "/user/allEvents?faces-redirect=true");
+                            "/user/allEvents?faces-redirect=true");
         }
     }
 
     public void forwardToLoginIfNotLoggedIn(ComponentSystemEvent cse) {
         String viewId = getFacesContext().getViewRoot().getViewId();
         if (!isUserLoggedIn() && !viewId.startsWith("/login") &&
-            !viewId.startsWith("/register")) {
+                !viewId.startsWith("/register")) {
             getFacesContext().getApplication().getNavigationHandler().
                     handleNavigation(getFacesContext(), null,
-                    "/login?faces-redirect=true");
+                            "/login?faces-redirect=true");
         }
     }
 

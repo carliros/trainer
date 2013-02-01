@@ -1,23 +1,24 @@
 package com.jsfcompref.trainer.backing;
 
-import com.jsfcompref.trainer.entity.User;
-import java.util.Map;
+import com.jsfcompref.trainer.model.User;
+
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
+import java.util.Map;
 
 
 @RequestScoped
 public abstract class AbstractBacking {
 
-    @ManagedProperty(value="#{facesContext}")
+    @ManagedProperty(value = "#{facesContext}")
     private FacesContext facesContext;
 
-    @ManagedProperty(value="#{requestScope}")
+    @ManagedProperty(value = "#{requestScope}")
     private Map<String, Object> requestMap;
 
-    @ManagedProperty(value="#{sessionScope}")
+    @ManagedProperty(value = "#{sessionScope}")
     private Map<String, Object> sessionMap;
 
     public User getCurrentUser() {

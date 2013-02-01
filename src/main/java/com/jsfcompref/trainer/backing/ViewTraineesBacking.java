@@ -1,23 +1,23 @@
-
 package com.jsfcompref.trainer.backing;
 
-import com.jsfcompref.trainer.entity.accessor.UserRegistry;
-import com.jsfcompref.trainer.entity.TrainingSession;
-import com.jsfcompref.trainer.entity.User;
-import java.util.ArrayList;
-import java.util.List;
+import com.jsfcompref.trainer.controller.UserRegistry;
+import com.jsfcompref.trainer.model.TrainingSession;
+import com.jsfcompref.trainer.model.User;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIData;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import java.util.ArrayList;
+import java.util.List;
 
 @ManagedBean
 public class ViewTraineesBacking extends AbstractBacking {
 
     public DataModel<User> getTraineesForCurrentUser() {
-        DataModel<User> users = new ListDataModel<User>(UserRegistry.getCurrentInstance().getTraineesForTrainer(getCurrentUser()));
+        DataModel<User> users = new ListDataModel<User>(UserRegistry.getCurrentInstance().userEJB.getTraineesForTrainer(getCurrentUser()));
         return users;
     }
 
@@ -65,7 +65,7 @@ public class ViewTraineesBacking extends AbstractBacking {
                 getFacesContext().getApplication().getNavigationHandler().
                         handleNavigation(getFacesContext(), null, "/user/allEvents?faces-redirect=true");
             } else {
-                User user = UserRegistry.getCurrentInstance().getUserById(id);
+                User user = UserRegistry.getCurrentInstance().userEJB.getUserById(id);
                 if (null == user) {
                     getFacesContext().addMessage(null,
                             new FacesMessage("The user you requested does not exist"));

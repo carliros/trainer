@@ -1,20 +1,19 @@
 package com.jsfcompref.trainer.backing;
 
-import com.jsfcompref.trainer.entity.accessor.EntityAccessorException;
-import com.jsfcompref.trainer.entity.accessor.EventRegistry;
-import com.jsfcompref.trainer.entity.accessor.UserRegistry;
-import com.jsfcompref.trainer.entity.Event;
-import com.jsfcompref.trainer.entity.TrainingSession;
-import com.jsfcompref.trainer.entity.User;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.jsfcompref.trainer.controller.EventRegistry;
+import com.jsfcompref.trainer.controller.UserRegistry;
+import com.jsfcompref.trainer.model.Event;
+import com.jsfcompref.trainer.model.TrainingSession;
+import com.jsfcompref.trainer.model.User;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIData;
 import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ManagedBean
 public class EditTrainingEventBacking extends AbstractBacking {
@@ -41,8 +40,7 @@ public class EditTrainingEventBacking extends AbstractBacking {
                 getFacesContext().getApplication().getNavigationHandler().
                         handleNavigation(getFacesContext(), null, "/user/allEvents?faces-redirect=true");
             } else {
-                Event event = EventRegistry.getCurrentInstance().
-                        getEventForId(eventId);
+                Event event = EventRegistry.getCurrentInstance().eventEJB.getEventForId(eventId);
                 if (null == event) {
                     getFacesContext().addMessage(null,
                             new FacesMessage("The training event you requested does not exist"));
@@ -66,10 +64,10 @@ public class EditTrainingEventBacking extends AbstractBacking {
         newSession.setEventId(getSelectedEventId());
         newSession.setUser(currentUser);
 
-        currentUser.getTrainingSessions().add(newSession);
+        currentUser.getSessions().add(newSession);
         try {
             UserRegistry.getCurrentInstance().updateUser(currentUser);
-        } catch (EntityAccessorException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(EditTrainingEventBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -80,7 +78,7 @@ public class EditTrainingEventBacking extends AbstractBacking {
         if (null != (user = getCurrentUser()) && !user.isTrainer()) {
             getFacesContext().getApplication().getNavigationHandler().
                     handleNavigation(getFacesContext(), null,
-                    "/user/allEvents?faces-redirect=true");
+                            "/user/allEvents?faces-redirect=true");
 
         }
     }
@@ -92,16 +90,13 @@ public class EditTrainingEventBacking extends AbstractBacking {
         EventRegistry eventRegistry = EventRegistry.getCurrentInstance();
         Event newEvent = (Event) extContext.getRequestMap().get("event");
         try {
-            eventRegistry.addEvent(newEvent);
+            eventRegistry.eventEJB.addEvent(newEvent);
             result = "/user/allEvents?faces-redirect=true";
-        } catch (EntityAccessorException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(EditTrainingEventBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-
         return result;
-
-
     }
 
     public String updateExistingTrainingEvent() {
@@ -110,9 +105,9 @@ public class EditTrainingEventBacking extends AbstractBacking {
         EventRegistry eventRegistry = EventRegistry.getCurrentInstance();
         Event newEvent = getSelectedEvent();
         try {
-            eventRegistry.updateEvent(newEvent);
+            eventRegistry.eventEJB.updateEvent(newEvent);
             result = "/user/allEvents?faces-redirect=true";
-        } catch (EntityAccessorException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(EditTrainingEventBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
         getFlash().clear();
@@ -131,7 +126,7 @@ public class EditTrainingEventBacking extends AbstractBacking {
 
     public void setSelectedEventId(Long selectedEventId) {
         this.selectedEventId = selectedEventId;
-        setSelectedEvent(EventRegistry.getCurrentInstance().getEventForId(selectedEventId));
+        setSelectedEvent(EventRegistry.getCurrentInstance().eventEJB.getEventForId(selectedEventId));
     }
 
     public Event getSelectedEvent() {
@@ -139,7 +134,6 @@ public class EditTrainingEventBacking extends AbstractBacking {
     }
 
     public void setSelectedEvent(Event selectedEvent) {
-
         this.selectedEvent = selectedEvent;
     }
 
@@ -155,7 +149,7 @@ public class EditTrainingEventBacking extends AbstractBacking {
             UserRegistry userRegistry = UserRegistry.getCurrentInstance();
             User currentUser = getCurrentUser();
 
-            TrainingSession toRemove = (TrainingSession)trainingSessionData.getRowData();
+            TrainingSession toRemove = (TrainingSession) trainingSessionData.getRowData();
 
             userRegistry.removeTrainingSessionForUserAndEvent(currentUser, selectedEvent, toRemove);
         }
@@ -168,7 +162,4 @@ public class EditTrainingEventBacking extends AbstractBacking {
     public void setTrainingSessionData(UIData trainingSessionData) {
         this.trainingSessionData = trainingSessionData;
     }
-
-
-
 }
