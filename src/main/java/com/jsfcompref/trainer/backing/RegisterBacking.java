@@ -14,13 +14,11 @@ public class RegisterBacking extends AbstractBacking {
 
     private Object password1;
 
-    public void validatePassword1(FacesContext context, UIComponent component,
-                                  Object password1) throws ValidatorException {
+    public void validatePassword1(FacesContext context, UIComponent component, Object password1) throws ValidatorException {
         this.password1 = password1;
     }
 
-    public void validatePassword2(FacesContext context, UIComponent component,
-                                  Object password2) throws ValidatorException {
+    public void validatePassword2(FacesContext context, UIComponent component, Object password2) throws ValidatorException {
         if (!(password1.equals(password2))) {
             throw new ValidatorException(new FacesMessage("Passwords must match."));
         }
@@ -35,12 +33,15 @@ public class RegisterBacking extends AbstractBacking {
     public String registerUser() {
         String result = null;
 
-        User newUser = ((UserRegistry) getRequestMap().get("userRegistry")).getUser();
+        User newUser = new User();
+        //newUser = ((UserRegistry) getSessionMap().get("userRegistry")).getUser();
+        newUser = UserRegistry.getCurrentInstance().getUser();
 
         // set the password into the user, because we know the validator was
         // successful if we reached here.
 
         newUser.setPassword((String) getRequestMap().get("password1"));
+
         try {
             UserRegistry.getCurrentInstance().userEJB.addUser(newUser);
             setCurrentUser(newUser);

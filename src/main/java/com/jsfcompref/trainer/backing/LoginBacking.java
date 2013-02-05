@@ -18,8 +18,8 @@ public class LoginBacking extends AbstractBacking {
         boolean result = false;
 
         UserRegistry registry = UserRegistry.getCurrentInstance();
-
-        result = null != (nonAuthenticatedUser = registry.userEJB.getUserByUserId(toTest));
+        nonAuthenticatedUser = registry.userEJB.getUserByUserId(toTest);
+        result = null != (nonAuthenticatedUser);
 
         return result;
     }
@@ -64,6 +64,17 @@ public class LoginBacking extends AbstractBacking {
         }
     }
 
+    /*public String performLogin(String username) {
+        // set new user
+        UserRegistry registry = UserRegistry.getCurrentInstance();
+        User user = registry.userEJB.getUserByUserId(username);
+
+        setCurrentUser(user);
+        System.out.println(" --> " + user);
+        //set result
+        return getSuccessOutcome();
+    }*/
+
     public String performLogout() {
         String result = "/login?faces-redirect=true";
         setCurrentUser(null);
@@ -79,5 +90,4 @@ public class LoginBacking extends AbstractBacking {
     public void setLoginOutcomeChoiceList(UIInput loginOutcomeChoiceList) {
         this.loginOutcomeChoiceList = loginOutcomeChoiceList;
     }
-
 }

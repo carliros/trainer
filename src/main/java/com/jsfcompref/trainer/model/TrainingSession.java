@@ -1,16 +1,20 @@
 package com.jsfcompref.trainer.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "trainingSession.getAll", query = "select t from TrainingSession as t"),
-        @NamedQuery(name = "trainingSession.getSessionsForUserAndEvent", query = "select t from TrainingSession as t where t.user.id = :theId and t.eventId = :eventId")
+        @NamedQuery(name = "trainingSession.getAll"
+                , query = "select t from TrainingSession as t"),
+        @NamedQuery(name = "trainingSession.getSessionsForUserAndEvent"
+                , query = "select t from TrainingSession as t join t.user u where u.id = :theId and t.eventId = :eventId")
+        //, query = "select t from TrainingSession as t where t.user.id = :theId and t.eventId = :eventId")
 })
-public class TrainingSession {
+public class TrainingSession implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Temporal(TemporalType.DATE)
@@ -30,6 +34,21 @@ public class TrainingSession {
     @ManyToOne
     @JoinColumn
     private User user;
+
+    public TrainingSession() {
+    }
+
+    public TrainingSession(Long eventId, User user, Date workoutdate,
+                           String workoutdesc, boolean completed, String personalnotes,
+                           String trainingnotes) {
+        this.setUser(user);
+        this.setEventId(eventId);
+        this.setWorkoutDate(workoutdate);
+        this.setWorkoutDescription(workoutdesc);
+        this.setCompleted(completed);
+        this.setPersonalNotes(personalnotes);
+        this.setTrainerNotes(trainingnotes);
+    }
 
     public Long getId() {
         return id;

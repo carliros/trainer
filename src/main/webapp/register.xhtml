@@ -58,14 +58,17 @@
                 <h:message for="userid"/>
 
                 <h:outputLabel for="password" value="Password:"/>
-                <h:inputSecret required="true" id="password"
+                <h:inputSecret required="true"
+                               id="password"
                                validator="#{registerBacking.validatePassword1}"
                                value="#{requestScope.password1}"/>
                 <h:message for="password"/>
 
-                <h:outputLabel for="password2" value="Retype Password:"/>
-                <h:inputSecret required="true" id="password2" value="#{requestScope.password2}"
-                               validator="#{registerBacking.validatePassword2}"/>
+                <h:outputLabel for="password2" value="Repeat Password:"/>
+                <h:inputSecret required="true"
+                               id="password2"
+                               validator="#{registerBacking.validatePassword2}"
+                               value="#{requestScope.password2}"/>
                 <h:message for="password2"/>
 
 

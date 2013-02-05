@@ -1,6 +1,5 @@
 package trainer;
 
-import java.util.Map;
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.el.PropertyNotFoundException;
@@ -9,9 +8,9 @@ import javax.faces.component.UIInput;
 import javax.faces.component.UINamingContainer;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import java.util.Map;
 
 public class loginPanel extends UINamingContainer {
-
     private UIInput userid;
 
     private UIInput password;
@@ -44,38 +43,33 @@ public class loginPanel extends UINamingContainer {
         ELContext elContext = context.getELContext();
         ELResolver resolver = elContext.getELResolver();
         Map<String, Object> attrs = this.getAttributes();
-        Class paramTypes[] = { String.class };
+        Class paramTypes[] = {String.class};
         Object params[] = new Object[1];
         boolean useridIsValid, passwordIsValid;
 
         Object model = attrs.get("model");
+
         params[0] = getUserid().getValue();
-        useridIsValid = (Boolean) resolver.invoke(elContext, model, 
-                "useridIsValid", paramTypes, params);
+        useridIsValid = (Boolean) resolver.invoke(elContext, model, "useridIsValid", paramTypes, params);
 
         // failureOutcome is not a required attribute
         try {
-            action = (String) resolver.getValue(elContext, model,
-                    "failureOutcome");
+            action = (String) resolver.getValue(elContext, model, "failureOutcome");
         } catch (PropertyNotFoundException pnfe) {
             action = null;
         }
 
         if (!useridIsValid) {
-            message = new FacesMessage("Userid " + params[0].toString() + 
-                    " is not recognized.");
+            message = new FacesMessage("Userid " + params[0].toString() + " is not recognized.");
             context.addMessage(getUserid().getClientId(context), message);
         } else {
             params[0] = getPassword().getValue();
-            passwordIsValid = (Boolean) resolver.invoke(elContext, model,
-                    "passwordIsValid", paramTypes, params);
+            passwordIsValid = (Boolean) resolver.invoke(elContext, model, "passwordIsValid", paramTypes, params);
             if (!passwordIsValid) {
-                message = new FacesMessage("Password for userid " +
-                        (String) getUserid().getValue() + " is incorrect.");
+                message = new FacesMessage("Password for userid " + (String) getUserid().getValue() + " is incorrect.");
                 context.addMessage(password.getClientId(context), message);
             } else {
-                action = (String) resolver.getValue(elContext, model,
-                        "successOutcome");
+                action = (String) resolver.getValue(elContext, model, "successOutcome");
             }
         }
     }

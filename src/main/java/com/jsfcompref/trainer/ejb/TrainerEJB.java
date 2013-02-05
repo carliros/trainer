@@ -64,41 +64,6 @@ public class TrainerEJB {
         em.merge(toAdd);
     }
 
-    /*private void init() {
-        user.setSubscribedEvents(new ArrayList<Event>());
-    }*/
-
-    /*private void populateTrainingSessions() {
-        if (null == user.getSessions()) {
-            user.setSessions(new ArrayList<TrainingSession>());
-        }
-
-        //EventRegistry eventReg = EventRegistry.getCurrentInstance();
-
-        List<Event> events = user.getSubscribedEvents();
-        for (Event ev : events) {
-            TrainingSession ts = new TrainingSession();
-            ts.setEvent(ev);
-            ts.setWorkoutDate(new Date(1227817411));
-            ts.setWorkoutDescription("a workout desc");
-            ts.setUser(user);
-            ts.setCompleted(true);
-            ts.setPersonalNotes("something for now");
-            ts.setTrainerNotes("something");
-
-            user.getSessions().add(ts);
-
-            //user.getSessions().add(new TrainingSession(ev.getId(), this, new Date(1229459011), "a workout desc", true, "something for now", "something"));
-        }
-        try {
-            //UserRegistry userReg = UserRegistry.getCurrentInstance();
-            // necessary? userReg.addTrainingSessions(sessions);
-            updateUser(user);
-        } catch (Exception ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-
     public void updateUser(final User toUpdate) {
         em.merge(toUpdate);
     }
@@ -170,7 +135,7 @@ public class TrainerEJB {
         return result;
     }
 
-    public void addUser(final User toAdd) {
+    public void addUser(User toAdd) {
         em.persist(toAdd);
     }
 

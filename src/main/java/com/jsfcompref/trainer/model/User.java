@@ -1,18 +1,28 @@
 package com.jsfcompref.trainer.model;
 
+import com.jsfcompref.trainer.controller.EventRegistry;
+import com.jsfcompref.trainer.controller.UserRegistry;
+
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "user.getAll", query = "select u from User as u"),
-        @NamedQuery(name = "user.getTrainers", query = "select u from User as u where u.trainer = TRUE"),
-        @NamedQuery(name = "user.getUsersForTrainerId", query = "select u from User as u where u.personalTrainerId = :theId")
+        @NamedQuery(name = "user.getAll"
+                , query = "select u from User as u"),
+        @NamedQuery(name = "user.getTrainers"
+                , query = "select u from User as u where u.trainer = TRUE"),
+        @NamedQuery(name = "user.getUsersForTrainerId"
+                , query = "select u from User as u where u.personalTrainerId = :theId")
 })
-public class User {
+public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     private String firstName;
@@ -35,7 +45,7 @@ public class User {
 
     private boolean trainer;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Event> subscribedEvents;
 
     private Long personalTrainerId;
@@ -44,6 +54,30 @@ public class User {
     private List<TrainingSession> sessions;
 
     private boolean sessionsInitialized = false;
+
+    public User() {
+        init();
+    }
+
+    public User(String firstName, String lastName,
+                String sex, Date dob, String email, String serviceLevel,
+                String userid, String password, boolean isTrainer) {
+        this.init();
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setSex(sex);
+        this.setDob(dob);
+        this.setEmail(email);
+        this.setServiceLevel(serviceLevel);
+        this.setUserid(userid);
+        this.setPassword(password);
+        this.setTrainer(isTrainer);
+    }
+
+    private void init() {
+        subscribedEvents = new ArrayList<Event>();
+        //sessions = new ArrayList<TrainingSession>();
+    }
 
     public Long getId() {
         return id;
@@ -188,6 +222,16 @@ public class User {
         this.personalTrainerId = personalTrainerId;
     }
 
+    public User getPersonalTrainer() {
+        // By default, you are your own trainer
+        User result = this;
+        Long trainerId = getPersonalTrainerId();
+        if (null != trainerId) {
+            result = UserRegistry.getCurrentInstance().userEJB.getUserById(trainerId);
+        }
+        return result;
+    }
+
     public List<TrainingSession> getSessions() {
         return sessions;
     }
@@ -202,6 +246,49 @@ public class User {
 
     public void setSessionsInitialized(boolean sessionsInitialized) {
         this.sessionsInitialized = sessionsInitialized;
+    }
+
+    public DataModel<Event> getMyEvents() {
+        DataModel<Event> events = null; //
+        List<Event> myEvents = getSubscribedEvents();
+        //EventRegistry eventRegistry = EventRegistry.getCurrentInstance();
+
+        events = new ListDataModel<Event>(myEvents);
+
+        return events;
+    }
+
+    private void populateTrainingSessions() {
+        if (null == sessions) {
+            sessions = new ArrayList<TrainingSession>();
+        }
+
+        EventRegistry eventReg = EventRegistry.getCurrentInstance();
+
+        List<Event> events = getSubscribedEvents();
+        for (Event ev : events) {
+            sessions.add(new TrainingSession(ev.getId(), this, new java.util.Date(1227817411), "a workout desc", true, "something for now", "something"));
+            sessions.add(new TrainingSession(ev.getId(), this, new java.util.Date(1229459011), "a workout desc", true, "something for now", "something"));
+        }
+
+        UserRegistry userReg = UserRegistry.getCurrentInstance();
+        userReg.updateUser(this);
+    }
+
+    public DataModel<TrainingSession> getTrainingSessionsForEvent(Event e) {
+        // lazily initialize training sessions
+        if (!sessionsInitialized) {
+            populateTrainingSessions();
+            sessionsInitialized = true;
+            UserRegistry.getCurrentInstance().updateUser(this);
+        }
+
+        DataModel<TrainingSession> sessionsForEvent = null;
+        List<TrainingSession> sessionList = UserRegistry.getCurrentInstance().userEJB.getTrainingSessionsForUserAndEvent(this, e);
+
+        sessionsForEvent = new ListDataModel<TrainingSession>(sessionList);
+
+        return sessionsForEvent;
     }
 
     @Override

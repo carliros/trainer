@@ -1,13 +1,15 @@
 package com.jsfcompref.trainer.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@NamedQueries({@NamedQuery(name = "event.getAll", query = "select e from Event as e")})
-public class Event {
+@NamedQueries({@NamedQuery(name = "event.getAll"
+        , query = "select e from Event as e")})
+public class Event implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -24,6 +26,16 @@ public class Event {
     @ManyToOne
     @JoinColumn
     private User user;
+
+    public Event() {
+    }
+
+    public Event(String name, Date completionDate, String skill, String type) {
+        this.setName(name);
+        this.setCompletionDate(completionDate);
+        this.setSkill(skill);
+        this.setType(type);
+    }
 
     public Long getId() {
         return id;
