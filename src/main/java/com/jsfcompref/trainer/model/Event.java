@@ -1,5 +1,7 @@
 package com.jsfcompref.trainer.model;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -7,6 +9,8 @@ import java.util.Date;
 @Entity
 @NamedQueries({@NamedQuery(name = "event.getAll"
         , query = "select e from Event as e")})
+@ManagedBean
+@RequestScoped
 public class Event implements Serializable {
     @Id
     @GeneratedValue

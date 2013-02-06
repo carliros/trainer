@@ -22,8 +22,6 @@ public class UserRegistry implements Serializable {
     @EJB
     public TrainerEJB userEJB;
 
-    public User user = new User();
-
     public static UserRegistry getCurrentInstance() {
         UserRegistry result = null;
         Map<String, Object> appMap = FacesContext.getCurrentInstance().getExternalContext().getApplicationMap();
@@ -31,14 +29,6 @@ public class UserRegistry implements Serializable {
         assert (null != result);
 
         return result;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     @PostConstruct

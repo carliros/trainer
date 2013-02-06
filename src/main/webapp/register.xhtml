@@ -12,19 +12,19 @@
 
                 <h:outputLabel for="fname" value="First Name:"/>
                 <h:inputText label="First Name"
-                             id="fname" value="#{userRegistry.user.firstName}"
+                             id="fname" value="#{user.firstName}"
                              required="true"/>
                 <h:message for="fname"/>
 
                 <h:outputLabel for="lname" value="Last Name:"/>
                 <h:inputText label="Last Name"
-                             id="lname" value="#{userRegistry.user.lastName}"
+                             id="lname" value="#{user.lastName}"
                              required="true"/>
                 <h:message for="lname"/>
 
                 <h:outputLabel for="sex" value="Sex:"/>
                 <h:selectOneRadio label="Sex"
-                                  id="sex" value="#{userRegistry.user.sex}" required="true">
+                                  id="sex" value="#{user.sex}" required="true">
                     <f:selectItem itemLabel="Male" itemValue="male"/>
                     <f:selectItem itemLabel="Female" itemValue="female"/>
                 </h:selectOneRadio>
@@ -33,7 +33,7 @@
                 <h:outputLabel for="dob" value="Date of Birth:"/>
                 <h:panelGroup>
                     <h:inputText label="Date of Birth"
-                                 id="dob" value="#{userRegistry.user.dob}" required="true">
+                                 id="dob" value="#{user.dob}" required="true">
                         <f:convertDateTime pattern="MM-dd-yy"/>
                     </h:inputText> (mm-dd-yy)
                 </h:panelGroup>
@@ -41,12 +41,12 @@
 
                 <h:outputLabel for="email" value="Email Address:"/>
                 <h:inputText label="Email Address"
-                             id="email" value="#{userRegistry.user.email}" required="true"/>
+                             id="email" value="#{user.email}" required="true"/>
                 <h:message for="email"/>
 
                 <h:outputLabel for="slevel" value="Service Level:"/>
                 <h:selectOneMenu label="Service Level" id="slevel"
-                                 value="#{userRegistry.user.serviceLevel}">
+                                 value="#{user.serviceLevel}">
                     <f:selectItem itemLabel="Medium" itemValue="medium"/>
                     <f:selectItem itemLabel="Basic" itemValue="basic"/>
                     <f:selectItem itemLabel="Premium" itemValue="premium"/>
@@ -54,7 +54,7 @@
                 <h:message for="slevel"/>
 
                 <h:outputLabel for="userid" value="Userid:"/>
-                <h:inputText required="true" id="userid" value="#{userRegistry.user.userid}"/>
+                <h:inputText required="true" id="userid" value="#{user.userid}"/>
                 <h:message for="userid"/>
 
                 <h:outputLabel for="password" value="Password:"/>

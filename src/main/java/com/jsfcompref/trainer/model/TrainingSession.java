@@ -1,5 +1,7 @@
 package com.jsfcompref.trainer.model;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -9,9 +11,11 @@ import java.util.Date;
         @NamedQuery(name = "trainingSession.getAll"
                 , query = "select t from TrainingSession as t"),
         @NamedQuery(name = "trainingSession.getSessionsForUserAndEvent"
-                , query = "select t from TrainingSession as t join t.user u where u.id = :theId and t.eventId = :eventId")
+                , query = "select t from TrainingSession as t where t.user.id = :theId and t.eventId = :eventId")
         //, query = "select t from TrainingSession as t where t.user.id = :theId and t.eventId = :eventId")
 })
+@ManagedBean
+@RequestScoped
 public class TrainingSession implements Serializable {
     @Id
     @GeneratedValue

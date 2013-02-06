@@ -14,6 +14,7 @@ import javax.faces.model.ListDataModel;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,8 @@ public class EventRegistry implements Serializable {
 
     @EJB
     public TrainerEJB eventEJB;
+
+    private Event event = new Event();
 
     public static EventRegistry getCurrentInstance() {
         EventRegistry result = null;
@@ -76,7 +79,7 @@ public class EventRegistry implements Serializable {
         List<User> userList = userRegistry.getUserList();
 
         for (User u : userList) {
-            List<Event> subscribedEvents = u.getSubscribedEvents();
+            Set<Event> subscribedEvents = u.getSubscribedEvents();
             if (subscribedEvents.contains(event)) {
                 subscribedEvents.remove(event);
                 try {

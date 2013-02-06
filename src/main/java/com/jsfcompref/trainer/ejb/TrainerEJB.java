@@ -143,16 +143,16 @@ public class TrainerEJB {
         em.remove(em.contains(toRemove) ? toRemove : em.merge(toRemove));
     }
 
-    public List<TrainingSession> getTrainingSessionsForUserAndEvent(final User user, final Event e) {
+    public List<TrainingSession> getTrainingSessionsForUserAndEvent(final User user, final Event event) {
         List<TrainingSession> result = null;
-        try {
-            Query query = em.createNamedQuery("trainingSession.getSessionsForUserAndEvent");
-            query.setParameter("theId", user.getId());
-            query.setParameter("eventId", e.getId());
-            result = query.getResultList();
-        } catch (Exception ex) {
+        /*try {*/
+        Query query = em.createNamedQuery("trainingSession.getSessionsForUserAndEvent");
+        query.setParameter("theId", user.getId());
+        query.setParameter("eventId", event.getId());
+        result = query.getResultList();
+        /*} catch (Exception ex) {
             Logger.getLogger(TrainerEJB.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
 
         return result;
     }

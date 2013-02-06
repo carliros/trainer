@@ -6,7 +6,7 @@ import com.jsfcompref.trainer.model.Event;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIData;
-import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class EventTableBacking extends AbstractBacking {
 
     private UIData events;
-    private List<Event> subscribedEvents;
+    private Set<Event> subscribedEvents;
 
     /*public List<Long> getSubscribedEventIds() {
         if (null == subscribedEventIds) {
@@ -23,7 +23,7 @@ public class EventTableBacking extends AbstractBacking {
         return subscribedEventIds;
     }*/
 
-    public List<Event> getSubscribedEvents() {
+    public Set<Event> getSubscribedEvents() {
         if (null == subscribedEvents) {
             subscribedEvents = getCurrentUser().getSubscribedEvents();
         }

@@ -6,6 +6,7 @@ import com.jsfcompref.trainer.model.User;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
@@ -32,10 +33,13 @@ public class RegisterBacking extends AbstractBacking {
      */
     public String registerUser() {
         String result = null;
+        UserRegistry userRegistry = UserRegistry.getCurrentInstance();
+        ExternalContext extContext = getFacesContext().getExternalContext();
 
-        User newUser = new User();
+        User newUser = (User) extContext.getRequestMap().get("user");
+
         //newUser = ((UserRegistry) getSessionMap().get("userRegistry")).getUser();
-        newUser = UserRegistry.getCurrentInstance().getUser();
+        //newUser = UserRegistry.getCurrentInstance().getUser();
 
         // set the password into the user, because we know the validator was
         // successful if we reached here.
@@ -53,7 +57,6 @@ public class RegisterBacking extends AbstractBacking {
         }
 
         return result;
-
     }
 
 }

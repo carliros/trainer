@@ -3,23 +3,25 @@ package com.jsfcompref.trainer.model;
 import com.jsfcompref.trainer.controller.EventRegistry;
 import com.jsfcompref.trainer.controller.UserRegistry;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @NamedQueries({
         @NamedQuery(name = "user.getAll"
-                , query = "select u from User as u"),
+                , query = "select u from User as u "),
         @NamedQuery(name = "user.getTrainers"
                 , query = "select u from User as u where u.trainer = TRUE"),
         @NamedQuery(name = "user.getUsersForTrainerId"
                 , query = "select u from User as u where u.personalTrainerId = :theId")
 })
+@ManagedBean
+@RequestScoped
 public class User implements Serializable {
     @Id
     @GeneratedValue
@@ -46,12 +48,12 @@ public class User implements Serializable {
     private boolean trainer;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Event> subscribedEvents;
+    private Set<Event> subscribedEvents;
 
     private Long personalTrainerId;
 
-    @OneToMany(mappedBy = "user")
-    private List<TrainingSession> sessions;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<TrainingSession> sessions;
 
     private boolean sessionsInitialized = false;
 
@@ -75,7 +77,7 @@ public class User implements Serializable {
     }
 
     private void init() {
-        subscribedEvents = new ArrayList<Event>();
+        subscribedEvents = new HashSet<Event>();
         //sessions = new ArrayList<TrainingSession>();
     }
 
@@ -159,11 +161,11 @@ public class User implements Serializable {
         this.trainer = trainer;
     }
 
-    public List<Event> getSubscribedEvents() {
+    public Set<Event> getSubscribedEvents() {
         return subscribedEvents;
     }
 
-    public void setSubscribedEvents(List<Event> subscribedEvents) {
+    public void setSubscribedEvents(Set<Event> subscribedEvents) {
         this.subscribedEvents = subscribedEvents;
     }
 
@@ -232,11 +234,11 @@ public class User implements Serializable {
         return result;
     }
 
-    public List<TrainingSession> getSessions() {
+    public Set<TrainingSession> getSessions() {
         return sessions;
     }
 
-    public void setSessions(List<TrainingSession> sessions) {
+    public void setSessions(Set<TrainingSession> sessions) {
         this.sessions = sessions;
     }
 
@@ -250,22 +252,25 @@ public class User implements Serializable {
 
     public DataModel<Event> getMyEvents() {
         DataModel<Event> events = null; //
-        List<Event> myEvents = getSubscribedEvents();
+        Set<Event> myEvents = getSubscribedEvents();
         //EventRegistry eventRegistry = EventRegistry.getCurrentInstance();
 
-        events = new ListDataModel<Event>(myEvents);
+        List<Event> myEventList = new ArrayList<Event>();
+        myEventList.addAll(myEvents);
+
+        events = new ListDataModel<Event>(myEventList);
 
         return events;
     }
 
     private void populateTrainingSessions() {
         if (null == sessions) {
-            sessions = new ArrayList<TrainingSession>();
+            sessions = new HashSet<TrainingSession>();
         }
 
         EventRegistry eventReg = EventRegistry.getCurrentInstance();
 
-        List<Event> events = getSubscribedEvents();
+        Set<Event> events = getSubscribedEvents();
         for (Event ev : events) {
             sessions.add(new TrainingSession(ev.getId(), this, new java.util.Date(1227817411), "a workout desc", true, "something for now", "something"));
             sessions.add(new TrainingSession(ev.getId(), this, new java.util.Date(1229459011), "a workout desc", true, "something for now", "something"));
