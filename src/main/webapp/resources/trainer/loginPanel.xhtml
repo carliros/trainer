@@ -44,7 +44,7 @@
         <h:outputText value="On Login, Go To:" rendered="#{! empty cc.facets.loginOutcomeChoiceList}"/>
         <h:panelGroup>
             <cc:renderFacet name="loginOutcomeChoiceList"/>
-            <h:commandButton value="Login2" action="#{cc.action}" actionListener="#{cc.actionListener}"/>
+            <h:commandButton value="Login" action="#{cc.action}" actionListener="#{cc.actionListener}"/>
         </h:panelGroup>
         <h:messages for="#{cc.clientId}"/>
 

@@ -34,8 +34,8 @@ public class RegisterBacking extends AbstractBacking {
     public String registerUser() {
         String result = null;
         UserRegistry userRegistry = UserRegistry.getCurrentInstance();
-        ExternalContext extContext = getFacesContext().getExternalContext();
 
+        ExternalContext extContext = getFacesContext().getExternalContext();
         User newUser = (User) extContext.getRequestMap().get("user");
 
         //newUser = ((UserRegistry) getSessionMap().get("userRegistry")).getUser();

@@ -63,6 +63,14 @@ public class UserRegistry implements Serializable {
         userEJB.updateUser(toUpdate);
     }
 
+    public void updateEvent(final Event toUpdate) {
+        userEJB.updateEvent(toUpdate);
+    }
+
+    public void addTrainingSession(TrainingSession toAdd) {
+        userEJB.addTrainingSession(toAdd);
+    }
+
     public void removeTrainingSessionForUserAndEvent(final User usr, final Event e, final TrainingSession trainingSession) {
         try {
             //em.remove(em.contains(trainingSession) ? trainingSession : em.merge(trainingSession)); // em.contains(r) ? r : em.merge(r)

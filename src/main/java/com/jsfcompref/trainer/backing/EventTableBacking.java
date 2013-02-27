@@ -55,18 +55,20 @@ public class EventTableBacking extends AbstractBacking {
         if (true == subscribedToEvent) {
             if (!isCurrentlySubscribed) {
                 getSubscribedEvents().add(currentEvent);
+                currentEvent.setUser(getCurrentUser());
                 doPersist = true;
             }
         } else if (isCurrentlySubscribed) {
-
             getSubscribedEvents().remove(currentEvent);
+            currentEvent.setUser(null);
             doPersist = true;
         }
         if (doPersist) {
             try {
                 //TODO make it sure if it have to be static
                 UserRegistry.getCurrentInstance().updateUser(getCurrentUser());
-
+                UserRegistry.getCurrentInstance().updateEvent(currentEvent);
+                //EventRegistry.getCurrentInstance().updateEvent(currentEvent);
             } catch (Exception ex) {
                 Logger.getLogger(EventTableBacking.class.getName()).log(Level.SEVERE, null, ex);
             }

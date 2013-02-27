@@ -1,6 +1,5 @@
 package com.jsfcompref.trainer.model;
 
-import com.jsfcompref.trainer.controller.EventRegistry;
 import com.jsfcompref.trainer.controller.UserRegistry;
 
 import javax.faces.bean.ManagedBean;
@@ -169,52 +168,6 @@ public class User implements Serializable {
         this.subscribedEvents = subscribedEvents;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        if (sessionsInitialized != user.sessionsInitialized) return false;
-        if (trainer != user.trainer) return false;
-        if (dob != null ? !dob.equals(user.dob) : user.dob != null) return false;
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
-        if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) return false;
-        if (!id.equals(user.id)) return false;
-        if (lastName != null ? !lastName.equals(user.lastName) : user.lastName != null) return false;
-        if (!password.equals(user.password)) return false;
-        if (personalTrainerId != null ? !personalTrainerId.equals(user.personalTrainerId) : user.personalTrainerId != null)
-            return false;
-        if (serviceLevel != null ? !serviceLevel.equals(user.serviceLevel) : user.serviceLevel != null) return false;
-        if (sessions != null ? !sessions.equals(user.sessions) : user.sessions != null) return false;
-        if (sex != null ? !sex.equals(user.sex) : user.sex != null) return false;
-        if (subscribedEvents != null ? !subscribedEvents.equals(user.subscribedEvents) : user.subscribedEvents != null)
-            return false;
-        if (!userid.equals(user.userid)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + (dob != null ? dob.hashCode() : 0);
-        result = 31 * result + (sex != null ? sex.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (serviceLevel != null ? serviceLevel.hashCode() : 0);
-        result = 31 * result + userid.hashCode();
-        result = 31 * result + password.hashCode();
-        result = 31 * result + (trainer ? 1 : 0);
-        result = 31 * result + (subscribedEvents != null ? subscribedEvents.hashCode() : 0);
-        result = 31 * result + (personalTrainerId != null ? personalTrainerId.hashCode() : 0);
-        result = 31 * result + (sessions != null ? sessions.hashCode() : 0);
-        result = 31 * result + (sessionsInitialized ? 1 : 0);
-        return result;
-    }
-
     public Long getPersonalTrainerId() {
 
         return personalTrainerId;
@@ -268,16 +221,19 @@ public class User implements Serializable {
             sessions = new HashSet<TrainingSession>();
         }
 
-        EventRegistry eventReg = EventRegistry.getCurrentInstance();
-
         Set<Event> events = getSubscribedEvents();
         for (Event ev : events) {
-            sessions.add(new TrainingSession(ev.getId(), this, new java.util.Date(1227817411), "a workout desc", true, "something for now", "something"));
-            sessions.add(new TrainingSession(ev.getId(), this, new java.util.Date(1229459011), "a workout desc", true, "something for now", "something"));
+            TrainingSession ts1 = new TrainingSession(ev.getId(), this, new java.util.Date(1227817411), "a workout desc", true, "something for now", "something");
+            TrainingSession ts2 = new TrainingSession(ev.getId(), this, new java.util.Date(1229459011), "a workout desc", true, "something for now", "something");
+
+            UserRegistry.getCurrentInstance().userEJB.addTrainingSession(ts1);
+            UserRegistry.getCurrentInstance().userEJB.addTrainingSession(ts2);
+
+            sessions.add(ts1);
+            sessions.add(ts2);
         }
 
-        UserRegistry userReg = UserRegistry.getCurrentInstance();
-        userReg.updateUser(this);
+        UserRegistry.getCurrentInstance().updateUser(this);
     }
 
     public DataModel<TrainingSession> getTrainingSessionsForEvent(Event e) {

@@ -59,6 +59,9 @@ public class EditTrainingEventBacking extends AbstractBacking {
     public void addTrainingSessionToCurrentEventForCurrentUser() {
         TrainingSession newSession = (TrainingSession)
                 getFacesContext().getExternalContext().getRequestMap().get("trainingSession");
+
+        //System.out.println("----> newSession 1: " + newSession);
+
         User currentUser = getCurrentUser();
 
         newSession.setEventId(getSelectedEventId());
@@ -66,12 +69,13 @@ public class EditTrainingEventBacking extends AbstractBacking {
 
         currentUser.getSessions().add(newSession);
         try {
+            System.out.println("----> newSession 2: " + newSession);
+            UserRegistry.getCurrentInstance().addTrainingSession(newSession);
             UserRegistry.getCurrentInstance().updateUser(currentUser);
         } catch (Exception ex) {
             Logger.getLogger(EditTrainingEventBacking.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
     public void forwardToMainIfNotTrainer(ComponentSystemEvent cse) {
         User user;

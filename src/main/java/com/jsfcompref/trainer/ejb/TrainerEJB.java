@@ -157,6 +157,10 @@ public class TrainerEJB {
         return result;
     }
 
+    public void addTrainingSession(TrainingSession toAdd) {
+        em.persist(toAdd);
+    }
+
     public void addTrainingSessions(final List<TrainingSession> toAdd) {
         for (TrainingSession t : toAdd) {
             em.persist(t);

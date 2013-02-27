@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 @ManagedBean(eager = true)
 @SessionScoped
 public class EventRegistry implements Serializable {
-
     @EJB
     public TrainerEJB eventEJB;
 
